@@ -238,6 +238,69 @@ end
 
 local roleMenuFrame = CreateFrame("Frame", "GridDarksolisRoleMenu", UIParent, "UIDropDownMenuTemplate")
 
+function GridFrameDecorations:InspectFrameUnit(frameObject)
+    if not frameObject or not frameObject.unit or not UnitExists(frameObject.unit) then return end
+    if InCombatLockdown and InCombatLockdown() then
+        Grid:Print("Players cannot be inspected during combat.")
+        return
+    end
+
+    local unit = frameObject.unit
+    if not UnitIsPlayer(unit) then
+        Grid:Print("That Grid unit is not a player.")
+        return
+    end
+
+    if CanInspect and not CanInspect(unit, false) then
+        Grid:Print("That player is too far away or cannot currently be inspected.")
+        return
+    end
+
+    CloseDropDownMenus()
+
+    if not IsAddOnLoaded("Blizzard_InspectUI") and LoadAddOn then
+        LoadAddOn("Blizzard_InspectUI")
+    end
+
+    if InspectUnit then
+        InspectUnit(unit)
+    elseif NotifyInspect then
+        NotifyInspect(unit)
+        if InspectFrame and ShowUIPanel then
+            ShowUIPanel(InspectFrame)
+        end
+    else
+        Grid:Print("This client does not expose a direct inspect API.")
+    end
+end
+
+function GridFrameDecorations:TradeFrameUnit(frameObject)
+    if not frameObject or not frameObject.unit or not UnitExists(frameObject.unit) then return end
+    if InCombatLockdown and InCombatLockdown() then
+        Grid:Print("Players cannot be traded with during combat.")
+        return
+    end
+
+    local unit = frameObject.unit
+    if not UnitIsPlayer(unit) then
+        Grid:Print("That Grid unit is not a player.")
+        return
+    end
+
+    if UnitIsUnit and UnitIsUnit(unit, "player") then
+        Grid:Print("You cannot trade with yourself.")
+        return
+    end
+
+    CloseDropDownMenus()
+
+    if InitiateTrade then
+        InitiateTrade(unit)
+    else
+        Grid:Print("This client does not expose a direct trade API.")
+    end
+end
+
 function GridFrameDecorations:OpenRoleMenu(frameObject)
     if not frameObject or not frameObject.unit or not UnitExists(frameObject.unit) then return end
     if InCombatLockdown and InCombatLockdown() then
@@ -281,6 +344,16 @@ function GridFrameDecorations:OpenRoleMenu(frameObject)
             text = "Support",
             checked = current == "SUPPORT",
             func = function() GridFrameDecorations:SetManualRole(fullName, "SUPPORT") end,
+        },
+        {
+            text = "Inspect Player",
+            notCheckable = true,
+            func = function() GridFrameDecorations:InspectFrameUnit(frameObject) end,
+        },
+        {
+            text = "Trade Player",
+            notCheckable = true,
+            func = function() GridFrameDecorations:TradeFrameUnit(frameObject) end,
         },
         {
             text = "Cancel",

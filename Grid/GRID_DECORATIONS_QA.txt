@@ -198,3 +198,136 @@ PASS 3 - Package integrity
 [PASS] Lua brackets balanced
 [PASS] TOC version updated
 [PASS] Broken support texture absent
+
+VERSION 1.1.5 QA PASSES
+
+PASS 1 - Horizontal health behavior
+[PASS] Default orientation is horizontal
+[PASS] Existing profiles migrate to horizontal
+[PASS] Migration is versioned
+[PASS] Horizontal health bar handling exists
+[PASS] Horizontal healing bar handling exists
+
+PASS 2 - Existing Grid orientation controls
+[PASS] Orientation setting remains in options
+[PASS] Horizontal option remains selectable
+[PASS] Vertical option remains selectable
+[PASS] Vertical rendering fallback remains
+[PASS] Frame placement logic retained
+
+PASS 3 - Decoration regression
+[PASS] Role decoration module retained
+[PASS] Support icon retained
+[PASS] Plain right-click retained
+[PASS] Unknown roles remain hidden
+[PASS] Power bars retained
+
+PASS 4 - Static and package integrity
+[PASS] Lua parentheses balanced
+[PASS] Lua brackets balanced
+[PASS] TOC version updated
+
+
+VERSION 1.1.6 QA PASSES
+
+PASS 1 - Health direction control
+[PASS] Reverse health default exists
+[PASS] Health direction method exists
+[PASS] Main health bar reverse fill applied
+[PASS] Healing bar reverse fill applied
+[PASS] Direction toggle exists
+[PASS] Direction toggle has Ace2 description
+[PASS] Direction setting updates every frame
+
+PASS 2 - Direct inspection
+[PASS] Inspect Player menu item exists
+[PASS] Inspect helper exists
+[PASS] Direct InspectUnit call exists
+[PASS] NotifyInspect fallback exists
+[PASS] Inspect UI loads when needed
+[PASS] Inspect range check exists
+[PASS] Combat inspection guard exists
+
+PASS 3 - Existing feature regression
+[PASS] Plain right-click role menu retained
+[PASS] Tank assignment retained
+[PASS] Healer assignment retained
+[PASS] Support assignment retained
+[PASS] Unknown roles remain hidden
+[PASS] Support icon retained
+
+PASS 4 - Static and package integrity
+[PASS] GridFrame parentheses balanced
+[PASS] Decorations parentheses balanced
+[PASS] GridFrame brackets balanced
+[PASS] Decorations brackets balanced
+[PASS] TOC version updated
+
+
+VERSION 1.1.7 QA PASSES
+
+PASS 1 - Four direction choices
+[PASS] Unified direction setting exists
+[PASS] Horizontal RTL option exists
+[PASS] Horizontal LTR option exists
+[PASS] Vertical TTB option exists
+[PASS] Vertical BTT option exists
+[PASS] SetHealthDirection method exists
+
+PASS 2 - Direction mechanics
+[PASS] Vertical TTB uses vertical orientation
+[PASS] Vertical TTB uses normal fill
+[PASS] Vertical BTT uses reverse fill
+[PASS] Horizontal LTR uses reverse fill
+[PASS] PlaceIndicators reapplies orientation
+[PASS] Healing bar reverse fill retained
+
+PASS 3 - Migration and settings cleanup
+[PASS] Direction schema migration exists
+[PASS] Legacy vertical migration exists
+[PASS] Old orientation selector removed
+[PASS] Old reverse toggle removed
+[PASS] New selector has Ace2 description
+
+PASS 4 - Feature regression and package integrity
+[PASS] Direct inspect retained
+[PASS] Role menu retained
+[PASS] Support icon retained
+[PASS] Unknown roles remain hidden
+[PASS] Lua parentheses balanced
+[PASS] Lua brackets balanced
+[PASS] TOC version updated
+
+
+VERSION 1.1.8 QA PASSES
+
+PASS 1 - Direct trade implementation
+[PASS] Trade Player menu item exists
+[PASS] Trade helper exists
+[PASS] Direct InitiateTrade call exists
+[PASS] Trade menu closes before action
+[PASS] Trade combat guard exists
+[PASS] Self-trade protection exists
+[PASS] Non-player protection exists
+[PASS] Missing trade API message exists
+
+PASS 2 - Right-click menu integration
+[PASS] Trade appears after Inspect
+[PASS] Trade appears before Cancel
+[PASS] Trade uses current Grid frame
+[PASS] Plain right-click menu retained
+
+PASS 3 - Existing feature regression
+[PASS] Inspect Player retained
+[PASS] Tank assignment retained
+[PASS] Healer assignment retained
+[PASS] DPS assignment retained
+[PASS] Support assignment retained
+[PASS] Unknown roles remain hidden
+[PASS] Health direction selector retained
+
+PASS 4 - Static and package integrity
+[PASS] Decorations parentheses balanced
+[PASS] Decorations brackets balanced
+[PASS] TOC version updated
+

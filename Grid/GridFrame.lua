@@ -73,7 +73,7 @@ function GridFrameClass.prototype:Reset()
 		self:ClearIndicator(indicator.type)
 	end
 	self:SetBorderSize(GridFrame.db.profile.borderSize)
-	self:SetOrientation(GridFrame.db.profile.orientation)
+	self:SetHealthDirection(GridFrame.db.profile.healthDrainDirection)
 	self:SetTextOrientation(GridFrame.db.profile.textorientation)
 	self:EnableText2(GridFrame.db.profile.enableText2)
 	self:SetIconSize(GridFrame.db.profile.iconSize, GridFrame.db.profile.iconBorderSize)
@@ -278,6 +278,41 @@ function GridFrameClass.prototype:SetOrientation(orientation)
 	self:PlaceIndicators()
 end
 
+function GridFrameClass.prototype:SetHealthDrainDirection(reverse)
+	self.reverseHealthDrain = reverse and true or false
+
+	local f = self.frame
+	if f.Bar.SetReverseFill then
+		f.Bar:SetReverseFill(self.reverseHealthDrain)
+	end
+	if f.HealingBar.SetReverseFill then
+		f.HealingBar:SetReverseFill(self.reverseHealthDrain)
+	end
+end
+
+function GridFrameClass.prototype:SetHealthDirection(direction)
+	direction = direction or "HORIZONTAL_RTL"
+	self.healthDrainDirection = direction
+
+	local orientation = "HORIZONTAL"
+	local reverse = false
+
+	if direction == "HORIZONTAL_LTR" then
+		orientation = "HORIZONTAL"
+		reverse = true
+	elseif direction == "VERTICAL_TTB" then
+		orientation = "VERTICAL"
+		reverse = false
+	elseif direction == "VERTICAL_BTT" then
+		orientation = "VERTICAL"
+		reverse = true
+	end
+
+	self.orientation = orientation
+	self.reverseHealthDrain = reverse
+	self:PlaceIndicators()
+end
+
 function GridFrameClass.prototype:SetTextOrientation(textorientation)
 	self.textorientation = textorientation
 	self:PlaceIndicators()
@@ -297,6 +332,13 @@ function GridFrameClass.prototype:PlaceIndicators()
 	else
 		f.Bar:SetOrientation("VERTICAL")
 		f.HealingBar:SetOrientation("VERTICAL")
+	end
+
+	if f.Bar.SetReverseFill then
+		f.Bar:SetReverseFill(self.reverseHealthDrain and true or false)
+	end
+	if f.HealingBar.SetReverseFill then
+		f.HealingBar:SetReverseFill(self.reverseHealthDrain and true or false)
 	end
 
 	if self.textorientation == "HORIZONTAL" then
@@ -743,7 +785,11 @@ GridFrame.defaultDB = {
 	frameWidth = 36,
 	borderSize = 1,
 	cornerSize = 6,
-	orientation = "VERTICAL",
+	orientation = "HORIZONTAL",
+	frameOrientationSchemaVersion = 1,
+	reverseHealthDrain = false,
+	healthDrainDirection = "HORIZONTAL_RTL",
+	healthDrainSchemaVersion = 1,
 	textorientation = "VERTICAL",
 	enableText2 = false,
 	enableBarColor = false,
@@ -1106,18 +1152,36 @@ GridFrame.options = {
 					end,
 					validate = { ["NONE"] = L["None"], ["OUTLINE"] = L["Thin"], ["THICKOUTLINE"] = L["Thick"] }
 				},
-				["orientation"] = {
+				["healthDrainDirection"] = {
 					type = "text",
-					name = L["Orientation of Frame"],
-					desc = L["Set frame orientation."],
+					name = "Health Bar Direction",
+					desc = "Choose the direction the remaining health bar shrinks as the player takes damage.",
 					get = function()
-						return GridFrame.db.profile.orientation
+						return GridFrame.db.profile.healthDrainDirection
 					end,
 					set = function(v)
-						GridFrame.db.profile.orientation = v
-						GridFrame:WithAllFrames(function(f) f:SetOrientation(v) end)
+						GridFrame.db.profile.healthDrainDirection = v
+						if v == "HORIZONTAL_LTR" then
+							GridFrame.db.profile.orientation = "HORIZONTAL"
+							GridFrame.db.profile.reverseHealthDrain = true
+						elseif v == "VERTICAL_TTB" then
+							GridFrame.db.profile.orientation = "VERTICAL"
+							GridFrame.db.profile.reverseHealthDrain = false
+						elseif v == "VERTICAL_BTT" then
+							GridFrame.db.profile.orientation = "VERTICAL"
+							GridFrame.db.profile.reverseHealthDrain = true
+						else
+							GridFrame.db.profile.orientation = "HORIZONTAL"
+							GridFrame.db.profile.reverseHealthDrain = false
+						end
+						GridFrame:WithAllFrames(function(f) f:SetHealthDirection(v) end)
 					end,
-					validate = { ["VERTICAL"] = L["Vertical"], ["HORIZONTAL"] = L["Horizontal"] }
+					validate = {
+						["HORIZONTAL_RTL"] = "Horizontal: Right to Left",
+						["HORIZONTAL_LTR"] = "Horizontal: Left to Right",
+						["VERTICAL_TTB"] = "Vertical: Top to Bottom",
+						["VERTICAL_BTT"] = "Vertical: Bottom to Top",
+					},
 				},
 				["textorientation"] = {
 					type = "text",
@@ -1180,6 +1244,29 @@ end
 
 function GridFrame:OnInitialize()
 	self.super.OnInitialize(self)
+
+	-- Darksolis Grid v1.1.5:
+	-- Migrate existing profiles from the original vertical health fill to
+	-- horizontal fill. A standard horizontal StatusBar fills left-to-right,
+	-- so damage removes health from the right edge toward the left.
+	if not self.db.profile.frameOrientationSchemaVersion
+		or self.db.profile.frameOrientationSchemaVersion < 1 then
+		self.db.profile.orientation = "HORIZONTAL"
+		self.db.profile.frameOrientationSchemaVersion = 1
+	end
+
+	if not self.db.profile.healthDrainSchemaVersion
+		or self.db.profile.healthDrainSchemaVersion < 1 then
+		if self.db.profile.orientation == "VERTICAL" then
+			self.db.profile.healthDrainDirection = self.db.profile.reverseHealthDrain
+				and "VERTICAL_BTT" or "VERTICAL_TTB"
+		else
+			self.db.profile.healthDrainDirection = self.db.profile.reverseHealthDrain
+				and "HORIZONTAL_LTR" or "HORIZONTAL_RTL"
+		end
+		self.db.profile.healthDrainSchemaVersion = 1
+	end
+
 	self.debugging = self.db.profile.debug
 
 	self.frames = {}

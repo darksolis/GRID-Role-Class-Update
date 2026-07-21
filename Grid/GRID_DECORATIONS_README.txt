@@ -73,3 +73,33 @@ VERSION 1.1.4 - BLACK SUPPORT ICON FIX
 - Changed the WoW texture reference to an extensionless path, matching the working role icons.
 - Removed the broken v2 texture from the package.
 - Kept automatic detection failure set to Hide Role Icon.
+
+VERSION 1.1.5 - HORIZONTAL HEALTH DRAIN
+- Changed the default Grid health-bar orientation from Vertical to Horizontal.
+- Added a one-time profile migration so existing profiles receive the change.
+- Health now remains anchored on the left and drains from right to left as damage is taken.
+- Healing prediction follows the same horizontal orientation.
+- The option remains available under Grid > Frame > Advanced > Orientation of Frame.
+
+VERSION 1.1.6 - HEALTH DIRECTION AND DIRECT INSPECT
+- Added Reverse Health Drain Direction under Grid > Frame > Advanced.
+- Off drains health from right to left; On drains health from left to right.
+- The incoming-heal bar follows the selected direction.
+- Added Inspect Player to the Grid right-click menu.
+- Inspect Player works directly from raid/party unit frames without targeting first.
+- Inspection still requires the player to be in inspect range and the group to be out of combat.
+
+VERSION 1.1.7 - COMPLETE HEALTH BAR DIRECTION SELECTOR
+- Replaced the separate frame-orientation and reverse-direction controls with one clean selector.
+- Added Horizontal: Right to Left.
+- Added Horizontal: Left to Right.
+- Added Vertical: Top to Bottom.
+- Added Vertical: Bottom to Top.
+- Incoming-heal prediction follows the selected health direction.
+- Existing orientation and reverse-fill settings are automatically migrated.
+
+VERSION 1.1.8 - DIRECT TRADE FROM GRID
+- Added Trade Player to the Grid right-click menu.
+- Trade Player uses the raid or party unit directly without targeting first.
+- Trading remains subject to normal game restrictions, including range and combat.
+- Added protection against attempting to trade with yourself or a non-player unit.
