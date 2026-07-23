@@ -1,0 +1,366 @@
+GRID INTEGRATION QA REPORT
+Version 1.0.0
+
+PASS 1 - PACKAGE & LOAD ORDER
+[PASS] TOC interface remains 30300
+[PASS] Integrated module is loaded after GridFrame
+[PASS] Version is branded
+[PASS] Role_Tank.tga exists
+[PASS] Role_Healer.tga exists
+[PASS] Role_DPS.tga exists
+[PASS] README exists
+
+PASS 2 - GRID FRAME LIFECYCLE
+[PASS] RegisterFrame attaches decorations
+[PASS] Unit refresh updates decorations
+[PASS] No core status mappings removed
+
+PASS 3 - FEATURES, API FALLBACKS & POLISH
+[PASS] Setting showTank
+[PASS] Setting showHealer
+[PASS] Setting showDPS
+[PASS] Setting preferCoAIcons
+[PASS] Setting showStandardClassFallback
+[PASS] Setting showPower
+[PASS] Setting powerHeight
+[PASS] All 21 CoA classes recognized
+[PASS] Custom icon tables supported
+[PASS] Custom atlas globals supported
+[PASS] Legacy mana fallback exists
+[PASS] Role fallback exists
+[PASS] Manual role override exists
+[PASS] Mouse disabled on overlays
+[PASS] No modern-only table.unpack
+[PASS] Balanced parentheses
+[PASS] Balanced square brackets
+[PASS] Balanced braces
+[PASS] No tabs in new module
+
+PASS 4 - ORIGINAL ADDON PRESERVATION
+[PASS] All original Grid files preserved
+
+FINAL POLISH REVIEW
+[PASS] Settings are grouped into Role Icons, Class Icons, Power Bars, and Appearance.
+[PASS] Tank, Healer, and DPS icons can be toggled independently.
+[PASS] CoA icons can be preferred while retaining a standard-class fallback.
+[PASS] Icon size, corner position, inset, and opacity are adjustable.
+[PASS] Power height, inset, background opacity, and empty-bar behavior are adjustable.
+[PASS] Frames preserve Grid click casting because decoration frames do not accept mouse input.
+[PASS] No external companion addon is required.
+
+LIVE CLIENT ITEMS TO VERIFY
+- Exact custom class-icon atlas globals used by the installed Ascension client build.
+- Accuracy of automatic healer/tank roles when the server does not publish role assignments.
+- Visual spacing at the user's selected Grid frame dimensions.
+
+VERSION 1.1.0 QA PASSES
+
+PASS 1 - Feature wiring
+[PASS] Support texture packaged
+[PASS] Support role texture registered
+[PASS] Right-click handler exists
+[PASS] Safe Alt-right-click default
+[PASS] Plain right-click optional setting
+[PASS] Manual menu has Auto Detect
+[PASS] Manual menu has Tank
+[PASS] Manual menu has Healer
+[PASS] Manual menu has DPS
+[PASS] Manual menu has Support
+
+PASS 2 - Safety and persistence
+[PASS] Manual roles persist in profile
+[PASS] Combat lockdown guarded
+[PASS] Mouse hook only attached once
+[PASS] Unknown fallback configurable
+[PASS] No role icon option exists
+[PASS] Slash command expanded
+
+PASS 3 - Package and static integrity
+[PASS] TOC version updated
+[PASS] Lua parentheses balanced
+[PASS] Lua brackets balanced
+[PASS] Original Grid frame hook retained
+
+
+LIVE TEST ITEMS
+- Alt + Right-Click a player while out of combat.
+- Assign Healer, close the menu, and verify the icon updates immediately.
+- Reload UI and verify the assignment persists.
+- Choose Auto Detect and verify the override is removed.
+- Confirm normal right-click click-casting still works with the safe default.
+- Enable plain right-click only if no right-click spell binding is in use.
+
+VERSION 1.1.1 QA PASSES
+
+PASS 1 - Reported regression
+[PASS] RangeOption now supplies a mandatory string desc.
+[PASS] roleSize has an explicit user-facing description.
+
+PASS 2 - Generated controls
+[PASS] Every ToggleOption inherits a string desc.
+[PASS] Every RangeOption inherits a string desc.
+
+PASS 3 - Explicit Ace2 controls
+[PASS] Role position selector has a desc.
+[PASS] Class position selector has a desc.
+[PASS] Manual role controls retain desc strings.
+
+PASS 4 - Regression preservation
+[PASS] Manual role menu retained.
+[PASS] Auto Detect, Tank, Healer, DPS, Melee, Ranged, and Support retained.
+[PASS] Persistent manual role overrides retained.
+
+VERSION 1.1.2 QA PASSES
+
+PASS 1 - Requested behavior changes
+[PASS] Support icon file exists
+[PASS] New support icon referenced
+[PASS] No melee role texture remains
+[PASS] No ranged role texture remains
+[PASS] Plain right-click handler active
+[PASS] No plain-right-click toggle remains
+[PASS] Menu has one DPS entry
+[PASS] Menu removed melee entry
+[PASS] Menu removed ranged entry
+[PASS] Slash usage simplified
+
+PASS 2 - Compatibility and migration
+[PASS] Legacy melee/ranged normalize to DAMAGER
+[PASS] Manual role migration on initialize
+[PASS] GetRole uses NormalizeRole for manual
+[PASS] Unknown role fallback preserved
+[PASS] Support toggle retained
+[PASS] Enable right-click menu toggle retained
+
+PASS 3 - Static integrity
+[PASS] Lua parentheses balanced
+[PASS] Lua brackets balanced
+[PASS] TOC version updated
+[PASS] Grid frame attach hook retained
+
+LIVE TEST NOTES
+- Right-click any Grid frame out of combat to open the role menu.
+- Existing melee/ranged manual assignments should now display as DPS.
+- If you use right-click click-casting, this build will intentionally prioritize the role menu instead.
+
+VERSION 1.1.3 QA PASSES
+
+PASS 1 - Requested behavior
+[PASS] Default fallback is NONE
+[PASS] One-time fallback migration exists
+[PASS] Schema version is 2
+[PASS] Support uses new filename
+[PASS] New support texture exists
+[PASS] Support texture differs from DPS
+
+PASS 2 - Texture replacement safety
+[PASS] Role texture is cleared before set
+[PASS] Role texture coordinates reset
+[PASS] Hidden roles clear texture
+[PASS] Support manual assignment retained
+[PASS] Support role remains valid
+
+PASS 3 - Regression preservation
+[PASS] Plain right-click retained
+[PASS] No Alt key requirement
+[PASS] Unified DPS retained
+[PASS] DPS command retained
+[PASS] Hide fallback setting remains selectable
+
+PASS 4 - Static and package integrity
+[PASS] Lua parentheses balanced
+[PASS] Lua brackets balanced
+[PASS] TOC version updated
+[PASS] Frame hook retained
+
+
+VERSION 1.1.4 QA PASSES
+
+PASS 1 - Texture compatibility
+[PASS] Support path omits extension
+[PASS] Broken v2 path removed from Lua
+[PASS] New support file exists
+[PASS] Support TGA has expected size
+[PASS] TGA is uncompressed true color
+[PASS] TGA is 32-bit
+[PASS] TGA includes 8-bit alpha
+[PASS] TGA uses top-left origin
+
+PASS 2 - Feature regression
+[PASS] Auto failure remains hidden
+[PASS] Support role remains registered
+[PASS] Support assignment remains in menu
+[PASS] Plain right-click remains enabled
+[PASS] Unified DPS remains
+
+PASS 3 - Package integrity
+[PASS] Lua parentheses balanced
+[PASS] Lua brackets balanced
+[PASS] TOC version updated
+[PASS] Broken support texture absent
+
+VERSION 1.1.5 QA PASSES
+
+PASS 1 - Horizontal health behavior
+[PASS] Default orientation is horizontal
+[PASS] Existing profiles migrate to horizontal
+[PASS] Migration is versioned
+[PASS] Horizontal health bar handling exists
+[PASS] Horizontal healing bar handling exists
+
+PASS 2 - Existing Grid orientation controls
+[PASS] Orientation setting remains in options
+[PASS] Horizontal option remains selectable
+[PASS] Vertical option remains selectable
+[PASS] Vertical rendering fallback remains
+[PASS] Frame placement logic retained
+
+PASS 3 - Decoration regression
+[PASS] Role decoration module retained
+[PASS] Support icon retained
+[PASS] Plain right-click retained
+[PASS] Unknown roles remain hidden
+[PASS] Power bars retained
+
+PASS 4 - Static and package integrity
+[PASS] Lua parentheses balanced
+[PASS] Lua brackets balanced
+[PASS] TOC version updated
+
+
+VERSION 1.1.6 QA PASSES
+
+PASS 1 - Health direction control
+[PASS] Reverse health default exists
+[PASS] Health direction method exists
+[PASS] Main health bar reverse fill applied
+[PASS] Healing bar reverse fill applied
+[PASS] Direction toggle exists
+[PASS] Direction toggle has Ace2 description
+[PASS] Direction setting updates every frame
+
+PASS 2 - Direct inspection
+[PASS] Inspect Player menu item exists
+[PASS] Inspect helper exists
+[PASS] Direct InspectUnit call exists
+[PASS] NotifyInspect fallback exists
+[PASS] Inspect UI loads when needed
+[PASS] Inspect range check exists
+[PASS] Combat inspection guard exists
+
+PASS 3 - Existing feature regression
+[PASS] Plain right-click role menu retained
+[PASS] Tank assignment retained
+[PASS] Healer assignment retained
+[PASS] Support assignment retained
+[PASS] Unknown roles remain hidden
+[PASS] Support icon retained
+
+PASS 4 - Static and package integrity
+[PASS] GridFrame parentheses balanced
+[PASS] Decorations parentheses balanced
+[PASS] GridFrame brackets balanced
+[PASS] Decorations brackets balanced
+[PASS] TOC version updated
+
+
+VERSION 1.1.7 QA PASSES
+
+PASS 1 - Four direction choices
+[PASS] Unified direction setting exists
+[PASS] Horizontal RTL option exists
+[PASS] Horizontal LTR option exists
+[PASS] Vertical TTB option exists
+[PASS] Vertical BTT option exists
+[PASS] SetHealthDirection method exists
+
+PASS 2 - Direction mechanics
+[PASS] Vertical TTB uses vertical orientation
+[PASS] Vertical TTB uses normal fill
+[PASS] Vertical BTT uses reverse fill
+[PASS] Horizontal LTR uses reverse fill
+[PASS] PlaceIndicators reapplies orientation
+[PASS] Healing bar reverse fill retained
+
+PASS 3 - Migration and settings cleanup
+[PASS] Direction schema migration exists
+[PASS] Legacy vertical migration exists
+[PASS] Old orientation selector removed
+[PASS] Old reverse toggle removed
+[PASS] New selector has Ace2 description
+
+PASS 4 - Feature regression and package integrity
+[PASS] Direct inspect retained
+[PASS] Role menu retained
+[PASS] Support icon retained
+[PASS] Unknown roles remain hidden
+[PASS] Lua parentheses balanced
+[PASS] Lua brackets balanced
+[PASS] TOC version updated
+
+
+VERSION 1.1.8 QA PASSES
+
+PASS 1 - Direct trade implementation
+[PASS] Trade Player menu item exists
+[PASS] Trade helper exists
+[PASS] Direct InitiateTrade call exists
+[PASS] Trade menu closes before action
+[PASS] Trade combat guard exists
+[PASS] Self-trade protection exists
+[PASS] Non-player protection exists
+[PASS] Missing trade API message exists
+
+PASS 2 - Right-click menu integration
+[PASS] Trade appears after Inspect
+[PASS] Trade appears before Cancel
+[PASS] Trade uses current Grid frame
+[PASS] Plain right-click menu retained
+
+PASS 3 - Existing feature regression
+[PASS] Inspect Player retained
+[PASS] Tank assignment retained
+[PASS] Healer assignment retained
+[PASS] DPS assignment retained
+[PASS] Support assignment retained
+[PASS] Unknown roles remain hidden
+[PASS] Health direction selector retained
+
+PASS 4 - Static and package integrity
+[PASS] Decorations parentheses balanced
+[PASS] Decorations brackets balanced
+[PASS] TOC version updated
+
+
+VERSION 1.1.9 QA PASSES
+
+PASS 1 - Remove-from-raid action
+[PASS] Remove menu item exists
+[PASS] Remove helper exists
+[PASS] UninviteUnit call exists
+[PASS] Confirmation popup exists
+[PASS] Confirmation text includes player name
+[PASS] Remove button exists
+[PASS] Cancel button exists
+
+PASS 2 - Permission and safety guards
+[PASS] Combat guard exists
+[PASS] Self removal guard exists
+[PASS] Leader check exists
+[PASS] Assistant check exists
+[PASS] Permission error message exists
+[PASS] Non-player guard exists
+
+PASS 3 - Existing menu regression
+[PASS] Inspect retained
+[PASS] Trade retained
+[PASS] Tank retained
+[PASS] Healer retained
+[PASS] Support retained
+[PASS] Health direction selector retained
+
+PASS 4 - Static and package integrity
+[PASS] Decorations parentheses balanced
+[PASS] Decorations brackets balanced
+[PASS] TOC version updated
+
