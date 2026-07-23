@@ -364,3 +364,19 @@ PASS 4 - Static and package integrity
 [PASS] Decorations brackets balanced
 [PASS] TOC version updated
 
+
+VERSION 1.2.0 QA PASSES
+[PASS] Whisper menu
+[PASS] Whisper helper
+[PASS] Primary API
+[PASS] Fallback API
+[PASS] Self guard
+[PASS] Nonplayer guard
+[PASS] Inspect retained
+[PASS] Trade retained
+[PASS] Remove retained
+[PASS] Role retained
+[PASS] Health selector
+[PASS] Parens
+[PASS] Brackets
+[PASS] Version

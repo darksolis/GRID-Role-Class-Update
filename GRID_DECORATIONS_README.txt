@@ -110,3 +110,10 @@ VERSION 1.1.9 - REMOVE FROM RAID
 - The action is restricted to raid leaders and assistants.
 - The action is blocked during combat.
 - Self-removal is blocked; use Leave Party or Leave Raid instead.
+
+VERSION 1.2.0 - WHISPER FROM GRID
+- Added Whisper Player to the Grid right-click menu.
+- Opens a whisper directly to the selected raid or party member.
+- The player does not need to be targeted first.
+- Includes a legacy chat-opening fallback for custom 3.3.5 clients.
+- Prevents attempting to whisper yourself or a non-player unit.

@@ -301,6 +301,34 @@ function GridFrameDecorations:TradeFrameUnit(frameObject)
     end
 end
 
+function GridFrameDecorations:WhisperFrameUnit(frameObject)
+    if not frameObject or not frameObject.unit or not UnitExists(frameObject.unit) then return end
+
+    local unit = frameObject.unit
+    if not UnitIsPlayer(unit) then
+        Grid:Print("That Grid unit is not a player.")
+        return
+    end
+
+    if UnitIsUnit and UnitIsUnit(unit, "player") then
+        Grid:Print("You cannot whisper yourself.")
+        return
+    end
+
+    local name = UnitName(unit)
+    if not name then return end
+
+    CloseDropDownMenus()
+
+    if ChatFrame_SendTell then
+        ChatFrame_SendTell(name)
+    elseif ChatFrame_OpenChat then
+        ChatFrame_OpenChat("/w " .. name .. " ")
+    else
+        Grid:Print("This client does not expose a whisper chat API.")
+    end
+end
+
 StaticPopupDialogs["GRID_DARKSOLIS_CONFIRM_REMOVE"] = {
     text = "Remove %s from the raid?",
     button1 = "Remove",
@@ -422,6 +450,11 @@ function GridFrameDecorations:OpenRoleMenu(frameObject)
             text = "Trade Player",
             notCheckable = true,
             func = function() GridFrameDecorations:TradeFrameUnit(frameObject) end,
+        },
+        {
+            text = "Whisper Player",
+            notCheckable = true,
+            func = function() GridFrameDecorations:WhisperFrameUnit(frameObject) end,
         },
         {
             text = "|cffff5555Remove from Raid|r",
