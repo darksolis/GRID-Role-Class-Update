@@ -59,8 +59,9 @@ function GridStatusHeals:Reset()
 end
 
 function GridStatusHeals:UpdateIncomingHeals(unit)
-	if unit then
+	if type(unit) == "string" and unit ~= "" and UnitExists(unit) then
 		local guid = UnitGUID(unit)
+		if not guid then return end
 		local incoming = UnitGetIncomingHeals(unit)
 		if incoming and incoming > 0 then
 			self:SendIncomingHealsStatus(guid, incoming, UnitHealth(unit) + incoming, UnitHealthMax(unit))

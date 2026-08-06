@@ -715,7 +715,12 @@ local abolish_types_seen = {}
 function GridStatusAuras:ScanUnitAuras(unit)
 	local name, rank, icon, count, debuffType, duration, expirationTime, caster, isStealable
 
+	if type(unit) ~= "string" or unit == "" or not UnitExists(unit) then
+		return
+	end
+
 	local guid = UnitGUID(unit)
+	if not guid then return end
 	if not GridRoster:IsGUIDInRaid(guid) then
 		return
 	end

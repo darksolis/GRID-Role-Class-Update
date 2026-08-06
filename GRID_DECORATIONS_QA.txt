@@ -380,3 +380,100 @@ VERSION 1.2.0 QA PASSES
 [PASS] Parens
 [PASS] Brackets
 [PASS] Version
+
+VERSION 1.2.1 QA PASSES
+
+PASS 1 - Player, party, and raid unit paths
+[PASS] Player unit supported
+[PASS] Party units supported
+[PASS] Raid units supported
+[PASS] OpenRoleMenu uses supported-unit guard
+[PASS] Inspect uses supported-unit guard
+[PASS] Trade uses supported-unit guard
+[PASS] Whisper uses supported-unit guard
+[PASS] Remove uses supported-unit guard
+
+PASS 2 - Party roster and power updates
+[PASS] Party roster event registered
+[PASS] Raid roster event retained
+[PASS] Grid roster event retained
+[PASS] Party max energy updates registered
+[PASS] Party max rage updates registered
+[PASS] Power bars retained
+[PASS] Class icons retained
+
+PASS 3 - Party-aware right-click menu
+[PASS] Party group detection exists
+[PASS] Party leader fallback exists
+[PASS] Dynamic Remove from Party exists
+[PASS] Dynamic Remove from Raid retained
+[PASS] Removal menu disables without permission
+[PASS] Group confirmation wording updated
+
+PASS 4 - Existing feature regression
+[PASS] Health direction selector retained
+[PASS] Support icon retained
+[PASS] Unknown roles remain hidden
+[PASS] Inspect retained
+[PASS] Trade retained
+[PASS] Whisper retained
+[PASS] Manual roles retained
+
+PASS 5 - Static and package integrity
+[PASS] Decorations parentheses balanced
+[PASS] Decorations brackets balanced
+[PASS] TOC version updated
+
+
+VERSION 1.2.2 QA PASSES
+
+PASS 1 - Reported UnitGUID regressions
+[PASS] Health validates unit before UnitGUID
+[PASS] Auras validates unit before UnitGUID
+[PASS] Name validates unit before UnitGUID
+[PASS] Health rejects missing GUID
+[PASS] Auras rejects missing GUID
+[PASS] Name only updates valid GUID
+
+PASS 2 - Proactive status-module hardening
+[PASS] Mana contains unit validation
+[PASS] Aggro contains unit validation
+[PASS] Heals contains unit validation
+[PASS] ReadyCheck contains unit validation
+[PASS] Voice contains unit validation
+[PASS] Vehicle contains unit validation
+[PASS] Roster contains unit validation
+
+PASS 3 - Party and raid feature regression
+[PASS] Party units retained
+[PASS] Raid units retained
+[PASS] Inspect retained
+[PASS] Trade retained
+[PASS] Whisper retained
+[PASS] Remove group retained
+[PASS] Health direction retained
+[PASS] Roles retained
+
+PASS 4 - Static and package integrity
+[PASS] Health parentheses balanced
+[PASS] Health brackets balanced
+[PASS] Auras parentheses balanced
+[PASS] Auras brackets balanced
+[PASS] Name parentheses balanced
+[PASS] Name brackets balanced
+[PASS] Mana parentheses balanced
+[PASS] Mana brackets balanced
+[PASS] Aggro parentheses balanced
+[PASS] Aggro brackets balanced
+[PASS] Heals parentheses balanced
+[PASS] Heals brackets balanced
+[PASS] ReadyCheck parentheses balanced
+[PASS] ReadyCheck brackets balanced
+[PASS] Voice parentheses balanced
+[PASS] Voice brackets balanced
+[PASS] Vehicle parentheses balanced
+[PASS] Vehicle brackets balanced
+[PASS] Roster parentheses balanced
+[PASS] Roster brackets balanced
+[PASS] TOC version updated
+

@@ -205,7 +205,12 @@ function GridStatusHealth:Grid_UnitJoined(guid, unitid)
 end
 
 function GridStatusHealth:UpdateUnit(unitid, ignoreRange)
+	if type(unitid) ~= "string" or unitid == "" or not UnitExists(unitid) then
+		return
+	end
+
 	local guid = UnitGUID(unitid)
+	if not guid then return end
 
 	if not GridRoster:IsGUIDInRaid(guid) then
 		return

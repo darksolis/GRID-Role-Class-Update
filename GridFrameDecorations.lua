@@ -236,10 +236,52 @@ local function CreateIconFrame(parent)
 end
 
 
+local function IsSupportedGridUnit(unit)
+    if not unit or not UnitExists(unit) then return false end
+    if unit == "player" then return true end
+    if string.match(unit, "^party%d+$") then return true end
+    if string.match(unit, "^raid%d+$") then return true end
+    return false
+end
+
+local function IsInRaidGroup()
+    if GetNumRaidMembers then
+        return (GetNumRaidMembers() or 0) > 0
+    end
+    return false
+end
+
+local function IsInPartyGroup()
+    if IsInRaidGroup() then return false end
+    if GetNumPartyMembers then
+        return (GetNumPartyMembers() or 0) > 0
+    end
+    return false
+end
+
+local function IsGroupLeaderOrAssistant()
+    local leader = UnitIsGroupLeader and UnitIsGroupLeader("player")
+    local assistant = UnitIsGroupAssistant and UnitIsGroupAssistant("player")
+
+    if IsInRaidGroup() then
+        if not leader and IsRaidLeader then leader = IsRaidLeader() end
+        if not assistant and IsRaidOfficer then assistant = IsRaidOfficer() end
+        return leader or assistant
+    end
+
+    if IsInPartyGroup() then
+        if not leader and IsPartyLeader then leader = IsPartyLeader() end
+        if not leader and UnitIsPartyLeader then leader = UnitIsPartyLeader("player") end
+        return leader and true or false
+    end
+
+    return false
+end
+
 local roleMenuFrame = CreateFrame("Frame", "GridDarksolisRoleMenu", UIParent, "UIDropDownMenuTemplate")
 
 function GridFrameDecorations:InspectFrameUnit(frameObject)
-    if not frameObject or not frameObject.unit or not UnitExists(frameObject.unit) then return end
+    if not frameObject or not IsSupportedGridUnit(frameObject.unit) then return end
     if InCombatLockdown and InCombatLockdown() then
         Grid:Print("Players cannot be inspected during combat.")
         return
@@ -275,7 +317,7 @@ function GridFrameDecorations:InspectFrameUnit(frameObject)
 end
 
 function GridFrameDecorations:TradeFrameUnit(frameObject)
-    if not frameObject or not frameObject.unit or not UnitExists(frameObject.unit) then return end
+    if not frameObject or not IsSupportedGridUnit(frameObject.unit) then return end
     if InCombatLockdown and InCombatLockdown() then
         Grid:Print("Players cannot be traded with during combat.")
         return
@@ -302,7 +344,7 @@ function GridFrameDecorations:TradeFrameUnit(frameObject)
 end
 
 function GridFrameDecorations:WhisperFrameUnit(frameObject)
-    if not frameObject or not frameObject.unit or not UnitExists(frameObject.unit) then return end
+    if not frameObject or not IsSupportedGridUnit(frameObject.unit) then return end
 
     local unit = frameObject.unit
     if not UnitIsPlayer(unit) then
@@ -330,13 +372,13 @@ function GridFrameDecorations:WhisperFrameUnit(frameObject)
 end
 
 StaticPopupDialogs["GRID_DARKSOLIS_CONFIRM_REMOVE"] = {
-    text = "Remove %s from the raid?",
+    text = "Remove %s from the group?",
     button1 = "Remove",
     button2 = "Cancel",
     OnAccept = function(self, data)
         if not data or not data.name then return end
         if InCombatLockdown and InCombatLockdown() then
-            Grid:Print("Raid members cannot be removed during combat.")
+            Grid:Print("Group members cannot be removed during combat.")
             return
         end
         if UninviteUnit then
@@ -352,9 +394,9 @@ StaticPopupDialogs["GRID_DARKSOLIS_CONFIRM_REMOVE"] = {
 }
 
 function GridFrameDecorations:RemoveFrameUnit(frameObject)
-    if not frameObject or not frameObject.unit or not UnitExists(frameObject.unit) then return end
+    if not frameObject or not IsSupportedGridUnit(frameObject.unit) then return end
     if InCombatLockdown and InCombatLockdown() then
-        Grid:Print("Raid members cannot be removed during combat.")
+        Grid:Print("Group members cannot be removed during combat.")
         return
     end
 
@@ -369,18 +411,8 @@ function GridFrameDecorations:RemoveFrameUnit(frameObject)
         return
     end
 
-    local isLeader = UnitIsGroupLeader and UnitIsGroupLeader("player")
-    local isAssistant = UnitIsGroupAssistant and UnitIsGroupAssistant("player")
-
-    if not isLeader and IsRaidLeader then
-        isLeader = IsRaidLeader()
-    end
-    if not isAssistant and IsRaidOfficer then
-        isAssistant = IsRaidOfficer()
-    end
-
-    if not isLeader and not isAssistant then
-        Grid:Print("You must be the raid leader or an assistant to remove players.")
+    if not IsGroupLeaderOrAssistant() then
+        Grid:Print("You must be the party leader, raid leader, or a raid assistant to remove players.")
         return
     end
 
@@ -398,7 +430,7 @@ function GridFrameDecorations:RemoveFrameUnit(frameObject)
 end
 
 function GridFrameDecorations:OpenRoleMenu(frameObject)
-    if not frameObject or not frameObject.unit or not UnitExists(frameObject.unit) then return end
+    if not frameObject or not IsSupportedGridUnit(frameObject.unit) then return end
     if InCombatLockdown and InCombatLockdown() then
         Grid:Print("Manual Grid role assignment is unavailable during combat.")
         return
@@ -457,8 +489,9 @@ function GridFrameDecorations:OpenRoleMenu(frameObject)
             func = function() GridFrameDecorations:WhisperFrameUnit(frameObject) end,
         },
         {
-            text = "|cffff5555Remove from Raid|r",
+            text = IsInRaidGroup() and "|cffff5555Remove from Raid|r" or "|cffff5555Remove from Party|r",
             notCheckable = true,
+            disabled = not IsGroupLeaderOrAssistant(),
             func = function() GridFrameDecorations:RemoveFrameUnit(frameObject) end,
         },
         {
@@ -736,7 +769,7 @@ GridFrameDecorations.options = {
         enableRoleMenu = {
             type = "toggle",
             name = "Enable Right-Click Role Menu",
-            desc = "Allows manual role assignment directly from a Grid player frame with plain right-click.",
+            desc = "Allows role assignment and player actions directly from Grid party and raid frames with plain right-click.",
             order = 17,
             get = function() return GridFrameDecorations.db.profile.enableRoleMenu end,
             set = function(value) GridFrameDecorations.db.profile.enableRoleMenu = value end,
@@ -847,12 +880,16 @@ end
 function GridFrameDecorations:OnEnable()
     self:RegisterEvent("PLAYER_ENTERING_WORLD", "RefreshAll")
     self:RegisterEvent("Grid_RosterUpdated", "RefreshAll")
+    self:RegisterEvent("PARTY_MEMBERS_CHANGED", "RefreshAll")
+    self:RegisterEvent("RAID_ROSTER_UPDATE", "RefreshAll")
     self:RegisterEvent("PLAYER_ROLES_ASSIGNED", "RefreshAll")
     self:RegisterEvent("UNIT_DISPLAYPOWER", "UpdateUnit")
     self:RegisterEvent("UNIT_MANA", "UpdateUnit")
     self:RegisterEvent("UNIT_MAXMANA", "UpdateUnit")
     self:RegisterEvent("UNIT_RAGE", "UpdateUnit")
+    self:RegisterEvent("UNIT_MAXRAGE", "UpdateUnit")
     self:RegisterEvent("UNIT_ENERGY", "UpdateUnit")
+    self:RegisterEvent("UNIT_MAXENERGY", "UpdateUnit")
     self:RegisterEvent("UNIT_RUNIC_POWER", "UpdateUnit")
     self:RegisterEvent("Grid_ColorsChanged", "RefreshAll")
     self:RefreshAll()

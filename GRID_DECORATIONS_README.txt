@@ -117,3 +117,19 @@ VERSION 1.2.0 - WHISPER FROM GRID
 - The player does not need to be targeted first.
 - Includes a legacy chat-opening fallback for custom 3.3.5 clients.
 - Prevents attempting to whisper yourself or a non-player unit.
+
+VERSION 1.2.1 - PARTY FRAME COMPATIBILITY PASS
+- Explicitly enabled role icons, CoA class icons, power bars, and right-click actions for party1-party4.
+- Added direct party roster refresh handling.
+- Inspect, Trade, Whisper, and manual role assignment now use the party unit directly.
+- Remove from Raid becomes Remove from Party while in a party.
+- Party removal is restricted to the party leader.
+- Raid removal remains restricted to the raid leader and assistants.
+- Player, party, and raid Grid units now share the same validated action path.
+
+VERSION 1.2.2 - PARTY/RAID UNIT TOKEN HARDENING
+- Fixed UnitGUID usage errors during party and raid roster transitions.
+- Added unit-token validation to Health, Auras, Name, Mana, Aggro, Heals, Ready Check, Voice, and Vehicle status modules.
+- Added validation inside GridRoster before UnitName and UnitGUID are called.
+- Transient empty or stale party/raid unit tokens are now ignored safely.
+- Party and raid frame features from v1.2.1 remain enabled.

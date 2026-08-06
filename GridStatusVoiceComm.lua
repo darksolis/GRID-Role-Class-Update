@@ -45,10 +45,16 @@ function GridStatusVoiceComm:OnStatusDisable(status)
 end
 
 function GridStatusVoiceComm:VOICE_START(unitid)
+	if type(unitid) ~= "string" or unitid == "" or not UnitExists(unitid) then
+		return
+	end
+
+	local guid = UnitGUID(unitid)
+	if not guid then return end
 	local settings = self.db.profile.alert_voice
 
 	self.core:SendStatusGained(
-		UnitGUID(unitid),
+		guid,
 		"alert_voice",
 		settings.priority,
 		(settings.range and 40),
@@ -60,5 +66,12 @@ function GridStatusVoiceComm:VOICE_START(unitid)
 end
 
 function GridStatusVoiceComm:VOICE_STOP(unitid)
-	self.core:SendStatusLost(UnitGUID(unitid), "alert_voice")
+	if type(unitid) ~= "string" or unitid == "" then
+		return
+	end
+
+	local guid = UnitGUID(unitid)
+	if guid then
+		self.core:SendStatusLost(guid, "alert_voice")
+	end
 end

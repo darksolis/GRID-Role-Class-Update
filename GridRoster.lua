@@ -138,6 +138,10 @@ do
 	local units_updated = {}
 
 	local function UpdateUnit(unit)
+		if type(unit) ~= "string" or unit == "" or not UnitExists(unit) then
+			return
+		end
+
 		local name, realm = UnitName(unit)
 		local guid = UnitGUID(unit)
 

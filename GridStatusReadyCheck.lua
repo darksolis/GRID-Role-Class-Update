@@ -190,7 +190,11 @@ end
 function GridStatusReadyCheck:READY_CHECK_CONFIRM(unit, confirm)
 	local settings = self.db.profile.ready_check
 	if settings.enable and self.readyChecking then
+		if type(unit) ~= "string" or unit == "" or not UnitExists(unit) then
+			return
+		end
 		local guid = UnitGUID(unit)
+		if not guid then return end
 		if confirm then
 			self:GainStatus(guid, "ready", settings)
 		else

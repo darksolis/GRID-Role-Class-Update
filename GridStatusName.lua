@@ -97,7 +97,14 @@ function GridStatusName:UpdateVehicle(unitid)
 end
 
 function GridStatusName:UpdateUnit(unitid)
-	self:UpdateGUID(UnitGUID(unitid))
+	if type(unitid) ~= "string" or unitid == "" or not UnitExists(unitid) then
+		return
+	end
+
+	local guid = UnitGUID(unitid)
+	if guid then
+		self:UpdateGUID(guid)
+	end
 end
 
 function GridStatusName:UpdateGUID(guid)

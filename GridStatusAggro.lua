@@ -160,12 +160,12 @@ function GridStatusAggro:UpdateAllUnits()
 end
 
 function GridStatusAggro:UpdateUnit(unitid)
-	if not unitid then
-		-- because sometimes the unitid can be nil... wtf?
+	if type(unitid) ~= "string" or unitid == "" or not UnitExists(unitid) then
 		return
 	end
 
 	local guid = UnitGUID(unitid)
+	if not guid then return end
 	local status = UnitThreatSituation(unitid)
 
 	local settings = self.db.profile.alert_aggro

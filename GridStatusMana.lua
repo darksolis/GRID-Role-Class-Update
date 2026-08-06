@@ -77,8 +77,12 @@ function GridStatusMana:UpdateAllUnits()
 end
 
 function GridStatusMana:UpdateUnit(unitid)
+	if type(unitid) ~= "string" or unitid == "" or not UnitExists(unitid) then
+		return
+	end
+
 	local guid = UnitGUID(unitid)
-	if not GridRoster:IsGUIDInRaid(guid) then return end
+	if not guid or not GridRoster:IsGUIDInRaid(guid) then return end
 	local powerType, powerTypeName = UnitPowerType(unitid)
 
 	-- mana user and is alive
