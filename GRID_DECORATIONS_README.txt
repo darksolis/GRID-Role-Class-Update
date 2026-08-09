@@ -133,3 +133,17 @@ VERSION 1.2.2 - PARTY/RAID UNIT TOKEN HARDENING
 - Added validation inside GridRoster before UnitName and UnitGUID are called.
 - Transient empty or stale party/raid unit tokens are now ignored safely.
 - Party and raid frame features from v1.2.1 remain enabled.
+
+VERSION 1.2.3 - COMBAT INTERACTION FIX
+- Grid right-click menus now open while in combat.
+- Whisper Player remains available in combat.
+- Inspect Player is no longer blocked by the addon; the client decides whether inspection is allowed.
+- Role changes are disabled in combat.
+- Trade and Remove from Group remain disabled in combat because those actions are protected by the client.
+
+VERSION 1.2.4 - COMBAT TOOLTIP FIX
+- Changed the default Grid player tooltip setting from OOC to Always.
+- Hovering party and raid Grid frames now shows the normal unit tooltip during combat.
+- Existing profiles using the old OOC default are migrated to Always once.
+- The original Show Tooltip setting remains available with Always, OOC, and Never choices.
+- No targeting, click-casting, or secure frame attributes are changed by this fix.

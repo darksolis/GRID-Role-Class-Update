@@ -804,7 +804,8 @@ GridFrame.defaultDB = {
 	enableMouseoverHighlight = true,
 	debug = false,
 	invertBarColor = false,
-	showTooltip = "OOC",
+	showTooltip = "Always",
+	tooltipCombatSchemaVersion = 1,
 	textlength = 4,
 	healingBar_intensity = 0.5,
 	statusmap = {
@@ -1265,6 +1266,15 @@ function GridFrame:OnInitialize()
 				and "HORIZONTAL_LTR" or "HORIZONTAL_RTL"
 		end
 		self.db.profile.healthDrainSchemaVersion = 1
+	end
+
+	-- v1.2.4: keep unit tooltips available while hovering Grid frames in combat.
+	if not self.db.profile.tooltipCombatSchemaVersion
+		or self.db.profile.tooltipCombatSchemaVersion < 1 then
+		if self.db.profile.showTooltip == "OOC" or self.db.profile.showTooltip == nil then
+			self.db.profile.showTooltip = "Always"
+		end
+		self.db.profile.tooltipCombatSchemaVersion = 1
 	end
 
 	self.debugging = self.db.profile.debug

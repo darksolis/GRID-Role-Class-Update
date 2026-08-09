@@ -259,6 +259,10 @@ local function IsInPartyGroup()
     return false
 end
 
+local function IsInCombat()
+    return InCombatLockdown and InCombatLockdown()
+end
+
 local function IsGroupLeaderOrAssistant()
     local leader = UnitIsGroupLeader and UnitIsGroupLeader("player")
     local assistant = UnitIsGroupAssistant and UnitIsGroupAssistant("player")
@@ -282,10 +286,6 @@ local roleMenuFrame = CreateFrame("Frame", "GridDarksolisRoleMenu", UIParent, "U
 
 function GridFrameDecorations:InspectFrameUnit(frameObject)
     if not frameObject or not IsSupportedGridUnit(frameObject.unit) then return end
-    if InCombatLockdown and InCombatLockdown() then
-        Grid:Print("Players cannot be inspected during combat.")
-        return
-    end
 
     local unit = frameObject.unit
     if not UnitIsPlayer(unit) then
@@ -431,10 +431,6 @@ end
 
 function GridFrameDecorations:OpenRoleMenu(frameObject)
     if not frameObject or not IsSupportedGridUnit(frameObject.unit) then return end
-    if InCombatLockdown and InCombatLockdown() then
-        Grid:Print("Manual Grid role assignment is unavailable during combat.")
-        return
-    end
 
     local unit = frameObject.unit
     local fullName = UnitName(unit)
@@ -444,32 +440,37 @@ function GridFrameDecorations:OpenRoleMenu(frameObject)
 
     local menu = {
         {
-            text = "|cff4bb8ff" .. fullName .. "|r",
+            text = "|cff4bb8ff" .. fullName .. "|r" .. (IsInCombat() and " |cffffaa00(Combat)|r" or ""),
             isTitle = true,
             notCheckable = true,
         },
         {
             text = "Auto Detect",
+            disabled = IsInCombat(),
             checked = not current,
             func = function() GridFrameDecorations:SetManualRole(fullName, "AUTO") end,
         },
         {
             text = "Tank",
+            disabled = IsInCombat(),
             checked = current == "TANK",
             func = function() GridFrameDecorations:SetManualRole(fullName, "TANK") end,
         },
         {
             text = "Healer",
+            disabled = IsInCombat(),
             checked = current == "HEALER",
             func = function() GridFrameDecorations:SetManualRole(fullName, "HEALER") end,
         },
         {
             text = "DPS",
+            disabled = IsInCombat(),
             checked = current == "DAMAGER" or current == "MELEE" or current == "RANGED",
             func = function() GridFrameDecorations:SetManualRole(fullName, "DAMAGER") end,
         },
         {
             text = "Support",
+            disabled = IsInCombat(),
             checked = current == "SUPPORT",
             func = function() GridFrameDecorations:SetManualRole(fullName, "SUPPORT") end,
         },
@@ -481,6 +482,7 @@ function GridFrameDecorations:OpenRoleMenu(frameObject)
         {
             text = "Trade Player",
             notCheckable = true,
+            disabled = IsInCombat(),
             func = function() GridFrameDecorations:TradeFrameUnit(frameObject) end,
         },
         {
@@ -491,7 +493,7 @@ function GridFrameDecorations:OpenRoleMenu(frameObject)
         {
             text = IsInRaidGroup() and "|cffff5555Remove from Raid|r" or "|cffff5555Remove from Party|r",
             notCheckable = true,
-            disabled = not IsGroupLeaderOrAssistant(),
+            disabled = IsInCombat() or not IsGroupLeaderOrAssistant(),
             func = function() GridFrameDecorations:RemoveFrameUnit(frameObject) end,
         },
         {

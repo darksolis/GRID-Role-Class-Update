@@ -477,3 +477,52 @@ PASS 4 - Static and package integrity
 [PASS] Roster brackets balanced
 [PASS] TOC version updated
 
+
+VERSION 1.2.3 QA PASSES
+[PASS] Menu combat guard removed
+[PASS] Inspect combat guard removed
+[PASS] Combat helper exists
+[PASS] Whisper retained
+[PASS] Trade disabled in combat
+[PASS] Remove disabled in combat
+[PASS] Auto role disabled in combat
+[PASS] Tank role disabled in combat
+[PASS] Healer role disabled in combat
+[PASS] DPS role disabled in combat
+[PASS] Support role disabled in combat
+[PASS] Party units retained
+[PASS] Raid units retained
+[PASS] Health direction retained
+[PASS] TOC version updated
+
+VERSION 1.2.4 QA PASSES
+
+PASS 1 - Combat tooltip behavior
+[PASS] Fresh default tooltip is Always
+[PASS] Tooltip migration schema exists
+[PASS] Existing OOC setting migrates to Always
+[PASS] Migration writes Always
+[PASS] OnEnter supports Always in combat
+[PASS] UnitFrame_OnEnter retained
+[PASS] UnitFrame_OnLeave retained
+
+PASS 2 - Tooltip settings regression
+[PASS] Show Tooltip setting retained
+[PASS] Always option retained
+[PASS] OOC option retained
+[PASS] Never option retained
+
+PASS 3 - Party/raid interaction regression
+[PASS] Party units retained
+[PASS] Raid units retained
+[PASS] Whisper retained
+[PASS] Inspect retained
+[PASS] Trade retained
+[PASS] Remove group retained
+[PASS] Combat menu helper retained
+
+PASS 4 - Static/package integrity
+[PASS] GridFrame parentheses balanced
+[PASS] GridFrame brackets balanced
+[PASS] TOC version updated
+
