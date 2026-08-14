@@ -163,6 +163,7 @@ GridLayout.defaultDB = {
 	},
 
 	horizontal = false,
+	prioritizeTanks = true,
 	clamp = true,
 	FrameLock = false,
 
@@ -294,6 +295,19 @@ GridLayout.options = {
 				end,
 			set = function (v)
 					GridLayout.db.profile.horizontal = v
+					GridLayout:ReloadLayout()
+				end,
+		},
+		["prioritizeTanks"] = {
+			type = "toggle",
+			name = "Keep Tanks & Healers at Top Left",
+			desc = "When enabled, Tanks are placed first, Healers next, and everyone else is compacted behind them with no subgroup gaps. Secure raid frames can only be resorted out of combat.",
+			order = ORDER_LAYOUT + 7,
+			get = function ()
+					return GridLayout.db.profile.prioritizeTanks
+				end,
+			set = function (v)
+					GridLayout.db.profile.prioritizeTanks = v
 					GridLayout:ReloadLayout()
 				end,
 		},
@@ -539,7 +553,24 @@ end
 
 local reloadLayoutQueued
 local updateSizeQueued
+local tankPriorityQueued
+
+function GridLayout:RequestTankPriorityRefresh()
+	if not self.db.profile.prioritizeTanks then return end
+
+	if InCombatLockdown() then
+		tankPriorityQueued = true
+	else
+		tankPriorityQueued = false
+		self:ReloadLayout()
+	end
+end
+
 function GridLayout:EnteringOrLeavingCombat()
+	if tankPriorityQueued and not InCombatLockdown() then
+		tankPriorityQueued = false
+		return self:ReloadLayout()
+	end
 	if reloadLayoutQueued then return self:PartyTypeChanged() end
 	if updateSizeQueued then return self:PartyMembersChanged() end
 end
@@ -554,9 +585,17 @@ function GridLayout:PartyMembersChanged()
 	self:Debug("PartyMembersChanged")
 	if InCombatLockdown() then
 		updateSizeQueued = true
+		if self.db.profile.prioritizeTanks then
+			tankPriorityQueued = true
+		end
 	else
-		self:UpdateSize()
+		if self.db.profile.prioritizeTanks then
+			self:ReloadLayout()
+		else
+			self:UpdateSize()
+		end
 		updateSizeQueued = false
+		tankPriorityQueued = false
 	end
 end
 
@@ -817,6 +856,152 @@ local function getColumnAnchorPoint(point, horizontal)
 	return point
 end
 
+local function GridLayout_UnitName(unit)
+	if not unit or not UnitExists(unit) then return nil end
+	local name, realm = UnitName(unit)
+	if not name then return nil end
+	if realm and realm ~= "" then
+		return name .. "-" .. realm
+	end
+	return name
+end
+
+local function GridLayout_IsTank(unit)
+	if not unit or not UnitExists(unit) then return false end
+
+	local decorations = _G.GridFrameDecorations
+	if decorations and decorations.GetRoleForUnit then
+		local role = decorations:GetRoleForUnit(unit)
+		if role == "TANK" then
+			return true
+		end
+	end
+
+	if GetPartyAssignment and GetPartyAssignment("MAINTANK", unit) then
+		return true
+	end
+
+	if UnitGroupRolesAssigned then
+		local role = UnitGroupRolesAssigned(unit)
+		if role == "TANK" then
+			return true
+		end
+	end
+
+	return false
+end
+
+local function GridLayout_IsHealer(unit)
+	if not unit or not UnitExists(unit) then return false end
+
+	local decorations = _G.GridFrameDecorations
+	if decorations and decorations.GetRoleForUnit then
+		local role = decorations:GetRoleForUnit(unit)
+		if role == "HEALER" then
+			return true
+		end
+	end
+
+	if UnitGroupRolesAssigned then
+		local role = UnitGroupRolesAssigned(unit)
+		if role == "HEALER" then
+			return true
+		end
+	end
+
+	return false
+end
+
+local function GridLayout_AddName(list, unit)
+	local name = GridLayout_UnitName(unit)
+	if name then
+		table.insert(list, name)
+	end
+end
+
+function GridLayout:BuildTankPriorityLayout()
+	if not self.db.profile.prioritizeTanks then return nil end
+
+	local tanks = {}
+	local healers = {}
+	local others = {}
+	local raidCount = GetNumRaidMembers and GetNumRaidMembers() or 0
+
+	if raidCount > 0 then
+		for i = 1, raidCount do
+			local unit = "raid" .. i
+			if UnitExists(unit) then
+				if GridLayout_IsTank(unit) then
+					GridLayout_AddName(tanks, unit)
+				elseif GridLayout_IsHealer(unit) then
+					GridLayout_AddName(healers, unit)
+				else
+					GridLayout_AddName(others, unit)
+				end
+			end
+		end
+	else
+		local units = { "player", "party1", "party2", "party3", "party4" }
+		for _, unit in ipairs(units) do
+			if UnitExists(unit) then
+				if GridLayout_IsTank(unit) then
+					GridLayout_AddName(tanks, unit)
+				elseif GridLayout_IsHealer(unit) then
+					GridLayout_AddName(healers, unit)
+				else
+					GridLayout_AddName(others, unit)
+				end
+			end
+		end
+	end
+
+	if #tanks == 0 and #healers == 0 then
+		return nil
+	end
+
+	local ordered = {}
+
+	for _, name in ipairs(tanks) do
+		table.insert(ordered, name)
+	end
+
+	for _, name in ipairs(healers) do
+		table.insert(ordered, name)
+	end
+
+	for _, name in ipairs(others) do
+		table.insert(ordered, name)
+	end
+
+	local result = {
+		defaults = {
+			sortMethod = "INDEX",
+		},
+	}
+
+	local groupSize = 5
+	local index = 1
+
+	while index <= #ordered do
+		local names = {}
+		for i = index, math.min(index + groupSize - 1, #ordered) do
+			table.insert(names, ordered[i])
+		end
+
+		table.insert(result, {
+			nameList = table.concat(names, ","),
+			showPlayer = true,
+			showParty = raidCount == 0,
+			showRaid = raidCount > 0,
+			sortMethod = "INDEX",
+		})
+
+		index = index + groupSize
+	end
+
+	return result
+end
+
 function GridLayout:LoadLayout(layoutName)
 	self.db.profile.layout = layoutName
 	if InCombatLockdown() then
@@ -825,7 +1010,7 @@ function GridLayout:LoadLayout(layoutName)
 	end
 	local p = self.db.profile
 	local horizontal = p.horizontal
-	local layout = self.layoutSettings[layoutName]
+	local layout = self:BuildTankPriorityLayout() or self.layoutSettings[layoutName]
 
 	self:Debug("LoadLayout", layoutName)
 

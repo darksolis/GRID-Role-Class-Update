@@ -526,3 +526,118 @@ PASS 4 - Static/package integrity
 [PASS] GridFrame brackets balanced
 [PASS] TOC version updated
 
+
+VERSION 1.2.5 QA PASSES
+[PASS] Auto Detect enabled in combat
+[PASS] Tank enabled in combat
+[PASS] Healer enabled in combat
+[PASS] DPS enabled in combat
+[PASS] Support enabled in combat
+[PASS] Manual role function marked combat-safe
+[PASS] Whisper retained
+[PASS] Tooltip default Always retained
+[PASS] Menu combat early-return absent
+[PASS] Inspect retained
+[PASS] Inspect addon combat rejection absent
+[PASS] Trade marked combat locked
+[PASS] Remove marked combat locked
+[PASS] Party units retained
+[PASS] Raid units retained
+[PASS] Support icon retained
+[PASS] Health direction retained
+[PASS] Unknown roles remain hidden
+[PASS] Lua parentheses balanced
+[PASS] Lua brackets balanced
+[PASS] TOC version updated
+
+VERSION 1.2.6 QA PASSES
+
+PASS 1 - Tank priority setting
+[PASS] Tank priority default enabled
+[PASS] Tank priority setting exists
+[PASS] Setting has Dewdrop desc
+[PASS] Toggle reloads layout
+
+PASS 2 - Role integration
+[PASS] Decorations expose role
+[PASS] Manual role change requests resort
+[PASS] Tank resolver checks addon role
+[PASS] Tank resolver checks MAINTANK
+[PASS] Tank resolver checks group role API
+
+PASS 3 - Dynamic tank-first layout
+[PASS] Tank priority builder exists
+[PASS] Tank block is inserted first
+[PASS] Raid subgroups preserved
+[PASS] Party non-tanks supported
+[PASS] Normal layout used when no tanks
+
+PASS 4 - Secure combat handling
+[PASS] Tank resort queue exists
+[PASS] Combat tank changes are queued
+[PASS] Queued resort runs after combat
+[PASS] Role icons still combat safe
+
+PASS 5 - Existing feature regression
+[PASS] Whisper retained
+[PASS] Inspect retained
+[PASS] Trade retained
+[PASS] Remove retained
+[PASS] Support retained
+[PASS] Health direction retained
+
+PASS 6 - Static/package integrity
+[PASS] Layout parentheses balanced
+[PASS] Layout brackets balanced
+[PASS] Decorations parentheses balanced
+[PASS] Decorations brackets balanced
+[PASS] TOC version updated
+
+
+VERSION 1.2.7 QA PASSES
+[PASS] Option renamed for tanks and healers
+[PASS] Healer detector exists
+[PASS] Healer resolver checks addon role
+[PASS] Healer resolver checks group API
+[PASS] Healers collection exists
+[PASS] Raid healers are collected
+[PASS] Party healers are collected
+[PASS] Priority names list exists
+[PASS] Tanks inserted before healers
+[PASS] Combined priority block uses priorityNames
+[PASS] No priority roles falls back normally
+[PASS] Manual role resort hook retained
+[PASS] Party support retained
+[PASS] Raid support retained
+[PASS] Combat-safe role assignment retained
+[PASS] Whisper retained
+[PASS] Inspect retained
+[PASS] Trade retained
+[PASS] Support retained
+[PASS] TOC version updated
+[PASS] Layout parentheses balanced
+[PASS] Layout brackets balanced
+
+VERSION 1.2.8 QA PASSES
+[PASS] Priority setting retained
+[PASS] Tank bucket exists
+[PASS] Healer bucket exists
+[PASS] Others bucket exists
+[PASS] Ordered roster exists
+[PASS] Tanks inserted first
+[PASS] Healers inserted before others
+[PASS] Compact group size is five
+[PASS] Consecutive chunk loop exists
+[PASS] Chunk ends at five or roster end
+[PASS] Old subgroup preservation removed
+[PASS] Old subgroup loop removed
+[PASS] No-priority fallback retained
+[PASS] Combat queue retained
+[PASS] Manual role resort hook retained
+[PASS] Whisper retained
+[PASS] Inspect retained
+[PASS] Trade retained
+[PASS] Support retained
+[PASS] TOC version updated
+[PASS] Layout parentheses balanced
+[PASS] Layout brackets balanced

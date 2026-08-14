@@ -147,3 +147,36 @@ VERSION 1.2.4 - COMBAT TOOLTIP FIX
 - Existing profiles using the old OOC default are migrated to Always once.
 - The original Show Tooltip setting remains available with Always, OOC, and Never choices.
 - No targeting, click-casting, or secure frame attributes are changed by this fix.
+
+VERSION 1.2.5 - COMBAT UI INTERACTION PASS
+- Manual role assignment now works during combat.
+- Auto Detect, Tank, Healer, DPS, and Support remain clickable in combat.
+- Whisper remains available during combat.
+- Player tooltips remain available during combat.
+- Inspect is no longer blocked by Grid; the WoW client decides whether inspection is allowed.
+- Trade and Remove from Group remain disabled during combat because those are protected WoW actions.
+- Combat-locked actions now say Combat Locked instead of making the whole menu appear broken.
+
+VERSION 1.2.6 - TANK PRIORITY POSITIONING
+- Added Keep Tanks at Top Left under Grid > Layout.
+- Enabled by default.
+- Detected Main Tanks and manually assigned Tank roles are placed into the first Grid group.
+- Non-tanks remain grouped behind the tank block.
+- Works with party and raid frames.
+- Secure unit frames cannot be physically resorted during combat; tank changes made in combat are queued and applied immediately when combat ends.
+- Tank role icons still update immediately in combat.
+
+VERSION 1.2.7 - TANK + HEALER PRIORITY POSITIONING
+- Priority layout now sorts Tanks first and Healers immediately after them.
+- Manual Healer assignments use the same role resolver as manual Tank assignments.
+- Detected healer roles from UnitGroupRolesAssigned are also prioritized when available.
+- Works for party and raid layouts.
+- Role icons update immediately in combat; physical frame resort remains queued until combat ends.
+
+VERSION 1.2.8 - COMPACT PRIORITY GRID
+- Fixed Tank/Healer priority layouts leaving empty spaces between raid groups.
+- The raid is now fully repacked into one ordered roster.
+- Sort order is Tanks first, Healers second, everyone else third.
+- The ordered roster is split into consecutive groups of five, so every Grid group fills continuously.
+- Original Blizzard raid subgroups are intentionally ignored for visual placement while this option is enabled.
+- Secure frame repositioning still queues until combat ends.

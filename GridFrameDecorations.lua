@@ -8,6 +8,7 @@ local _, ns = ...
 local L = ns.L
 
 local GridFrame = Grid:GetModule("GridFrame")
+local GridLayout = Grid:GetModule("GridLayout")
 local GridFrameDecorations = Grid:NewModule("GridFrameDecorations")
 _G.GridFrameDecorations = GridFrameDecorations
 
@@ -147,6 +148,11 @@ local function GetRole(unit)
     end
 
     return GridFrameDecorations.db.profile.unknownRoleFallback
+end
+
+function GridFrameDecorations:GetRoleForUnit(unit)
+    if not unit or not UnitExists(unit) then return nil end
+    return GetRole(unit)
 end
 
 local function RoleIsEnabled(role)
@@ -294,7 +300,7 @@ function GridFrameDecorations:InspectFrameUnit(frameObject)
     end
 
     if CanInspect and not CanInspect(unit, false) then
-        Grid:Print("That player is too far away or cannot currently be inspected.")
+        Grid:Print("That player cannot currently be inspected (range or client restriction).")
         return
     end
 
@@ -446,31 +452,26 @@ function GridFrameDecorations:OpenRoleMenu(frameObject)
         },
         {
             text = "Auto Detect",
-            disabled = IsInCombat(),
             checked = not current,
             func = function() GridFrameDecorations:SetManualRole(fullName, "AUTO") end,
         },
         {
             text = "Tank",
-            disabled = IsInCombat(),
             checked = current == "TANK",
             func = function() GridFrameDecorations:SetManualRole(fullName, "TANK") end,
         },
         {
             text = "Healer",
-            disabled = IsInCombat(),
             checked = current == "HEALER",
             func = function() GridFrameDecorations:SetManualRole(fullName, "HEALER") end,
         },
         {
             text = "DPS",
-            disabled = IsInCombat(),
             checked = current == "DAMAGER" or current == "MELEE" or current == "RANGED",
             func = function() GridFrameDecorations:SetManualRole(fullName, "DAMAGER") end,
         },
         {
             text = "Support",
-            disabled = IsInCombat(),
             checked = current == "SUPPORT",
             func = function() GridFrameDecorations:SetManualRole(fullName, "SUPPORT") end,
         },
@@ -480,7 +481,7 @@ function GridFrameDecorations:OpenRoleMenu(frameObject)
             func = function() GridFrameDecorations:InspectFrameUnit(frameObject) end,
         },
         {
-            text = "Trade Player",
+            text = IsInCombat() and "|cff888888Trade Player (Combat Locked)|r" or "Trade Player",
             notCheckable = true,
             disabled = IsInCombat(),
             func = function() GridFrameDecorations:TradeFrameUnit(frameObject) end,
@@ -491,7 +492,9 @@ function GridFrameDecorations:OpenRoleMenu(frameObject)
             func = function() GridFrameDecorations:WhisperFrameUnit(frameObject) end,
         },
         {
-            text = IsInRaidGroup() and "|cffff5555Remove from Raid|r" or "|cffff5555Remove from Party|r",
+            text = IsInCombat()
+                and "|cff888888Remove from Group (Combat Locked)|r"
+                or (IsInRaidGroup() and "|cffff5555Remove from Raid|r" or "|cffff5555Remove from Party|r"),
             notCheckable = true,
             disabled = IsInCombat() or not IsGroupLeaderOrAssistant(),
             func = function() GridFrameDecorations:RemoveFrameUnit(frameObject) end,
@@ -680,6 +683,9 @@ function GridFrameDecorations:RefreshAll(layoutOnly)
     end
 end
 
+-- COMBAT-SAFE ROLE OVERRIDES:
+-- This only updates addon profile data and decoration textures.
+-- It does not modify secure unit/button attributes.
 function GridFrameDecorations:SetManualRole(name, role)
     name = NormalizeName(name)
     if not name then return false end
@@ -697,6 +703,11 @@ function GridFrameDecorations:SetManualRole(name, role)
 
     self.db.profile.manualRoles[name] = role
     self:RefreshAll()
+
+    if GridLayout and GridLayout.RequestTankPriorityRefresh then
+        GridLayout:RequestTankPriorityRefresh()
+    end
+
     return true
 end
 
