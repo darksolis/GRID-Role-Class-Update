@@ -641,3 +641,40 @@ VERSION 1.2.8 QA PASSES
 [PASS] TOC version updated
 [PASS] Layout parentheses balanced
 [PASS] Layout brackets balanced
+
+VERSION 1.2.9 QA PASSES
+[PASS] default enabled
+[PASS] toggle exists
+[PASS] toggle order
+[PASS] menu gate exists
+[PASS] master menu toggle retained
+[PASS] whisper retained
+[PASS] inspect retained
+[PASS] trade retained
+[PASS] remove retained
+[PASS] tank/healer compact layout retained
+[PASS] health direction retained
+[PASS] version
+[PASS] paren balance
+[PASS] bracket balance
+
+VERSION 1.3.0 QA PASSES
+[PASS] GridFrame reference added
+[PASS] Effective padding helper exists
+[PASS] Zero padding branch exists
+[PASS] Zero padding compensates border size
+[PASS] Zero padding returns negative border footprint
+[PASS] Header orientation uses effective padding
+[PASS] Group placement uses effective padding
+[PASS] Column spacing uses effective padding
+[PASS] Size calculations use effective padding
+[PASS] Frame dimensions use effective padding
+[PASS] Padding slider still allows 0
+[PASS] Padding slider still uses step 1
+[PASS] Padding description explains seamless zero
+[PASS] Compact tank/healer layout retained
+[PASS] Combat menu toggle retained
+[PASS] Health direction retained
+[PASS] Lua parentheses balanced
+[PASS] Lua brackets balanced
+[PASS] TOC version updated

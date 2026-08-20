@@ -70,6 +70,7 @@ GridFrameDecorations.defaultDB = {
     rolePosition = "TOPLEFT",
 
     enableRoleMenu = true,
+    allowMenuInCombat = true,
     unknownRoleFallback = "NONE",
     decorationsSchemaVersion = 2,
 
@@ -438,6 +439,10 @@ end
 function GridFrameDecorations:OpenRoleMenu(frameObject)
     if not frameObject or not IsSupportedGridUnit(frameObject.unit) then return end
 
+    if IsInCombat() and not self.db.profile.allowMenuInCombat then
+        return
+    end
+
     local unit = frameObject.unit
     local fullName = UnitName(unit)
     if not fullName then return end
@@ -786,6 +791,14 @@ GridFrameDecorations.options = {
             order = 17,
             get = function() return GridFrameDecorations.db.profile.enableRoleMenu end,
             set = function(value) GridFrameDecorations.db.profile.enableRoleMenu = value end,
+        },
+        allowMenuInCombat = {
+            type = "toggle",
+            name = "Allow Right-Click Menu in Combat",
+            desc = "When enabled, the Grid right-click menu can open during combat. When disabled, the menu will only open while out of combat.",
+            order = 18,
+            get = function() return GridFrameDecorations.db.profile.allowMenuInCombat end,
+            set = function(value) GridFrameDecorations.db.profile.allowMenuInCombat = value end,
         },
         unknownRoleFallback = {
             type = "text",

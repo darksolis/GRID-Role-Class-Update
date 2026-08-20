@@ -180,3 +180,16 @@ VERSION 1.2.8 - COMPACT PRIORITY GRID
 - The ordered roster is split into consecutive groups of five, so every Grid group fills continuously.
 - Original Blizzard raid subgroups are intentionally ignored for visual placement while this option is enabled.
 - Secure frame repositioning still queues until combat ends.
+
+VERSION 1.2.9 - COMBAT MENU TOGGLE
+- Added Allow Right-Click Menu in Combat under Role, Class & Power.
+- Enabled by default.
+- When off, right-clicking Grid frames during combat will not open the custom menu.
+- When on, combat-safe menu actions remain available as before.
+
+VERSION 1.3.0 - TRUE ZERO PADDING
+- Padding 0 now means visually seamless, edge-to-edge Grid unit frames.
+- Zero padding compensates for each unit frame's visible border footprint.
+- Padding values 1 and higher continue to behave as normal positive spacing.
+- Applied consistently to unit spacing, group spacing, column spacing, and layout size calculations.
+- Compact Tank/Healer priority layouts retain the same seamless behavior.

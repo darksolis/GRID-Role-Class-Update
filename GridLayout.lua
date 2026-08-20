@@ -8,6 +8,7 @@ local L = ns.L
 local AceOO = AceLibrary("AceOO-2.0")
 local media = LibStub("LibSharedMedia-3.0", true)
 local GridRoster = Grid:GetModule("GridRoster")
+local GridFrame = Grid:GetModule("GridFrame")
 
 local GridLayout = Grid:NewModule("GridLayout")
 
@@ -33,6 +34,23 @@ function GridLayout_InitialConfigFunction(frame)
 end
 
 --}}}
+
+local function GetEffectivePadding()
+	local padding = GridLayout.db.profile.Padding or 0
+
+	if padding == 0 then
+		-- Adjacent Grid frames each carry a visible border footprint.
+		-- At user padding 0, overlap that footprint so 0 means visually
+		-- edge-to-edge instead of leaving a dark seam.
+		local borderSize = 1
+		if GridFrame and GridFrame.db and GridFrame.db.profile then
+			borderSize = GridFrame.db.profile.borderSize or 1
+		end
+		return 0 - math.max(1, borderSize)
+	end
+
+	return padding
+end
 
 --{{{ Class for group headers
 
@@ -103,7 +121,7 @@ end
 function GridLayoutHeaderClass.prototype:SetOrientation(horizontal)
 	local layoutSettings = GridLayout.db.profile
 	local groupAnchor = layoutSettings.groupAnchor
-	local padding = layoutSettings.Padding
+	local padding = GetEffectivePadding()
 
 	local xOffset, yOffset, point
 
@@ -343,7 +361,7 @@ GridLayout.options = {
 		["padding"] = {
 			type = "range",
 			name = L["Padding"],
-			desc = L["Adjust frame padding."],
+			desc = "Adjust space between Grid unit frames. Set to 0 for seamless edge-to-edge frames with no visible gap.",
 			order = ORDER_DISPLAY + 1,
 			max = 20,
 			min = 0,
@@ -794,7 +812,7 @@ function GridLayout:PlaceGroup(layoutGroup, groupNumber)
 
 	local settings = self.db.profile
 	local horizontal = settings.horizontal
-	local padding = settings.Padding
+	local padding = GetEffectivePadding()
 	local spacing = settings.Spacing
 	local groupAnchor = settings.groupAnchor
 
@@ -1070,7 +1088,7 @@ function GridLayout:LoadLayout(layoutName)
 			for attr, value in pairs(defaults) do
 				if attr == "unitsPerColumn" then
 					layoutGroup:SetFrameAttribute("unitsPerColumn", value)
-					layoutGroup:SetFrameAttribute("columnSpacing", p.Padding)
+					layoutGroup:SetFrameAttribute("columnSpacing", GetEffectivePadding())
 					layoutGroup:SetFrameAttribute("columnAnchorPoint", getColumnAnchorPoint(p.groupAnchor, p.horizontal))
 				else
 					layoutGroup:SetFrameAttribute(attr, value)
@@ -1082,7 +1100,7 @@ function GridLayout:LoadLayout(layoutName)
 		for attr, value in pairs(l) do
 			if attr == "unitsPerColumn" then
 				layoutGroup:SetFrameAttribute("unitsPerColumn", value)
-				layoutGroup:SetFrameAttribute("columnSpacing", p.Padding)
+				layoutGroup:SetFrameAttribute("columnSpacing", GetEffectivePadding())
 				layoutGroup:SetFrameAttribute("columnAnchorPoint",  getColumnAnchorPoint(p.groupAnchor, p.horizontal))
 			elseif attr ~= "isPetGroup" then
 				layoutGroup:SetFrameAttribute(attr, value)
@@ -1121,7 +1139,7 @@ function GridLayout:UpdateSize()
 
 	groupCount, curWidth, curHeight, maxWidth, maxHeight = -1, 0, 0, 0, 0
 
-	local Padding, Spacing = p.Padding, p.Spacing * 2
+	local Padding, Spacing = GetEffectivePadding(), p.Spacing * 2
 
 	for _, layoutGroup in ipairs(self.layoutGroups) do
 		if layoutGroup:IsFrameVisible() then
@@ -1186,8 +1204,9 @@ function GridLayout:FakeSize(width, height)
 	local frameWidth = f:GetWidth()
 	local frameHeight = f:GetHeight()
 
-	local x = frameWidth * width + (width - 1) * p.Padding + p.Spacing * 2
-	local y = frameHeight * height + (height - 1) * p.Padding + p.Spacing * 2
+	local effectivePadding = GetEffectivePadding()
+	local x = frameWidth * width + (width - 1) * effectivePadding + p.Spacing * 2
+	local y = frameHeight * height + (height - 1) * effectivePadding + p.Spacing * 2
 
 	self.frame:SetWidth(x)
 	self.frame:SetHeight(y)
