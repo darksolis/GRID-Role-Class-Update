@@ -193,3 +193,18 @@ VERSION 1.3.0 - TRUE ZERO PADDING
 - Padding values 1 and higher continue to behave as normal positive spacing.
 - Applied consistently to unit spacing, group spacing, column spacing, and layout size calculations.
 - Compact Tank/Healer priority layouts retain the same seamless behavior.
+
+VERSION 1.3.1 - RELATIVE DIRECTION ARROWS
+- Added Show Direction Arrows toggle under Role, Class & Power.
+- Adds a small arrow to party and raid frames showing where that player is relative to the direction you are facing.
+- Added Direction Arrow Size (8-20 pixels).
+- Uses eight pre-rendered TGA arrow directions for 3.3.5 compatibility.
+- Updates roughly every 0.15 seconds while enabled.
+- Hides the arrow when the client cannot provide reliable map position/facing data.
+- Does not modify secure click, targeting, menu, role, or combat attributes.
+
+VERSION 1.3.2 - STARTUP / LOAD-ORDER FIX
+- Fixed GridLayout failing to load because it referenced GridFrame before GridFrame.lua was loaded.
+- Restored the Layout configuration section and normal Grid frame creation.
+- Zero-padding now resolves the GridFrame border setting lazily after the module exists.
+- Direction Arrows and Role, Class & Power remain loaded after GridFrame as intended.

@@ -8,7 +8,6 @@ local L = ns.L
 local AceOO = AceLibrary("AceOO-2.0")
 local media = LibStub("LibSharedMedia-3.0", true)
 local GridRoster = Grid:GetModule("GridRoster")
-local GridFrame = Grid:GetModule("GridFrame")
 
 local GridLayout = Grid:NewModule("GridLayout")
 
@@ -39,12 +38,15 @@ local function GetEffectivePadding()
 	local padding = GridLayout.db.profile.Padding or 0
 
 	if padding == 0 then
-		-- Adjacent Grid frames each carry a visible border footprint.
-		-- At user padding 0, overlap that footprint so 0 means visually
-		-- edge-to-edge instead of leaving a dark seam.
+		-- GridLayout loads before GridFrame. Resolve GridFrame lazily so the
+		-- addon cannot fail during startup because of TOC load order.
 		local borderSize = 1
-		if GridFrame and GridFrame.db and GridFrame.db.profile then
-			borderSize = GridFrame.db.profile.borderSize or 1
+		local frameModule
+		if Grid.GetModule then
+			frameModule = Grid:GetModule("GridFrame", true)
+		end
+		if frameModule and frameModule.db and frameModule.db.profile then
+			borderSize = frameModule.db.profile.borderSize or 1
 		end
 		return 0 - math.max(1, borderSize)
 	end

@@ -81,6 +81,10 @@ GridFrameDecorations.defaultDB = {
     classPosition = "TOPRIGHT",
 
     showPower = true,
+
+    showDirectionArrow = false,
+    directionArrowSize = 12,
+
     powerHeight = 4,
     powerInset = 1,
     powerBackgroundAlpha = 0.85,
@@ -520,6 +524,101 @@ function GridFrameDecorations:HandleFrameMouseUp(frameObject, button)
     self:OpenRoleMenu(frameObject)
 end
 
+
+local DIRECTION_TEXTURES = {
+    MEDIA .. "DirectionArrow_0",
+    MEDIA .. "DirectionArrow_1",
+    MEDIA .. "DirectionArrow_2",
+    MEDIA .. "DirectionArrow_3",
+    MEDIA .. "DirectionArrow_4",
+    MEDIA .. "DirectionArrow_5",
+    MEDIA .. "DirectionArrow_6",
+    MEDIA .. "DirectionArrow_7",
+}
+
+local function NormalizeAngle(angle)
+    local twoPi = math.pi * 2
+    while angle < 0 do angle = angle + twoPi end
+    while angle >= twoPi do angle = angle - twoPi end
+    return angle
+end
+
+local function DirectionAngle(dx, dy)
+    -- Map Y grows downward. This returns an angle with:
+    -- 0=north, pi/2=east, pi=south, 3pi/2=west.
+    if dx == 0 then
+        if dy < 0 then return 0 end
+        return math.pi
+    end
+
+    local angle = math.atan(math.abs(dx / dy))
+
+    if dy < 0 and dx > 0 then
+        return angle
+    elseif dy >= 0 and dx > 0 then
+        return math.pi - angle
+    elseif dy >= 0 and dx < 0 then
+        return math.pi + angle
+    else
+        return (math.pi * 2) - angle
+    end
+end
+
+local function GetRelativeDirectionIndex(unit)
+    if not unit or not UnitExists(unit) then return nil end
+    if not GetPlayerMapPosition or not GetPlayerFacing then return nil end
+
+    local px, py = GetPlayerMapPosition("player")
+    local ux, uy = GetPlayerMapPosition(unit)
+
+    if not px or not py or not ux or not uy then return nil end
+    if (px == 0 and py == 0) or (ux == 0 and uy == 0) then return nil end
+
+    local dx = ux - px
+    local dy = uy - py
+    if math.abs(dx) < 0.00001 and math.abs(dy) < 0.00001 then return nil end
+
+    local absolute = NormalizeAngle(DirectionAngle(dx, dy))
+    local facing = GetPlayerFacing()
+    if not facing then return nil end
+
+    local relative = NormalizeAngle(absolute - facing)
+    return math.floor((relative + math.pi / 8) / (math.pi / 4)) % 8
+end
+
+function GridFrameDecorations:UpdateDirectionArrow(frameObject)
+    local d = frameObject and frameObject.decorations
+    if not d or not d.directionArrow then return end
+
+    if not self.db.profile.showDirectionArrow then
+        d.directionArrow:Hide()
+        return
+    end
+
+    local unit = frameObject.unit
+    if not unit or not UnitExists(unit) or (UnitIsUnit and UnitIsUnit(unit, "player")) then
+        d.directionArrow:Hide()
+        return
+    end
+
+    local index = GetRelativeDirectionIndex(unit)
+    if index == nil then
+        d.directionArrow:Hide()
+        return
+    end
+
+    d.directionArrow:SetTexture(DIRECTION_TEXTURES[index + 1])
+    d.directionArrow:SetVertexColor(1, 1, 1, 1)
+    d.directionArrow:Show()
+end
+
+function GridFrameDecorations:UpdateAllDirectionArrows()
+    if not GridFrame.registeredFrames then return end
+    for _, frameObject in pairs(GridFrame.registeredFrames) do
+        self:UpdateDirectionArrow(frameObject)
+    end
+end
+
 function GridFrameDecorations:AttachFrame(frameObject)
     if not frameObject or frameObject.decorations then return end
 
@@ -531,6 +630,11 @@ function GridFrameDecorations:AttachFrame(frameObject)
 
     local role = CreateIconFrame(overlay)
     local class = CreateIconFrame(overlay)
+
+    local directionArrow = overlay:CreateTexture(nil, "OVERLAY")
+    directionArrow:SetTexture(DIRECTION_TEXTURES[1])
+    directionArrow:SetVertexColor(1, 1, 1, 1)
+    directionArrow:Hide()
 
     local powerBG = overlay:CreateTexture(nil, "BORDER")
     powerBG:SetTexture(WHITE)
@@ -553,6 +657,7 @@ function GridFrameDecorations:AttachFrame(frameObject)
         overlay = overlay,
         role = role,
         class = class,
+        directionArrow = directionArrow,
         power = power,
         powerBG = powerBG,
     }
@@ -597,6 +702,11 @@ function GridFrameDecorations:LayoutFrame(frameObject)
     d.class:SetWidth(db.classSize)
     d.class:SetHeight(db.classSize)
     PlaceIcon(d.class, d.overlay, db.classPosition, db.iconInset, powerHeight)
+
+    d.directionArrow:ClearAllPoints()
+    d.directionArrow:SetWidth(db.directionArrowSize)
+    d.directionArrow:SetHeight(db.directionArrowSize)
+    d.directionArrow:SetPoint("RIGHT", d.overlay, "RIGHT", -(db.iconInset + 1), 0)
 
     d.powerBG:ClearAllPoints()
     d.powerBG:SetPoint("BOTTOMLEFT", d.overlay, "BOTTOMLEFT", db.powerInset, db.powerInset)
@@ -677,6 +787,8 @@ function GridFrameDecorations:UpdateFrame(frameObject)
         d.power:Hide()
         d.powerBG:Hide()
     end
+
+    self:UpdateDirectionArrow(frameObject)
 end
 
 function GridFrameDecorations:RefreshAll(layoutOnly)
@@ -844,6 +956,10 @@ GridFrameDecorations.options = {
         powerInset = RangeOption("powerInset", "Power Bar Inset", 0, 5, 1, "Set the spacing between the power bar and the frame edges."),
         powerBackgroundAlpha = RangeOption("powerBackgroundAlpha", "Power Bar Background Opacity", 0, 1, 0.05, "Adjust the darkness behind the power bar."),
 
+        directionHeader = { type = "header", name = "Direction Arrows", order = 36 },
+        showDirectionArrow = ToggleOption("showDirectionArrow", "Show Direction Arrows", "Show a small arrow on each party or raid frame pointing toward that player relative to the direction you are facing."),
+        directionArrowSize = RangeOption("directionArrowSize", "Direction Arrow Size", 8, 20, 1, "Set the direction arrow size in pixels."),
+
         polishHeader = { type = "header", name = "Appearance", order = 40 },
         iconInset = RangeOption("iconInset", "Icon Edge Inset", 0, 6, 1, "Set the spacing between icons and the frame edges."),
         iconAlpha = RangeOption("iconAlpha", "Icon and Bar Opacity", 0.25, 1, 0.05, "Adjust the opacity of role icons, class icons, and power bars."),
@@ -880,6 +996,8 @@ GridFrameDecorations.options.args.hidePowerWhenEmpty.order = 32
 GridFrameDecorations.options.args.powerHeight.order = 33
 GridFrameDecorations.options.args.powerInset.order = 34
 GridFrameDecorations.options.args.powerBackgroundAlpha.order = 35
+GridFrameDecorations.options.args.showDirectionArrow.order = 37
+GridFrameDecorations.options.args.directionArrowSize.order = 38
 GridFrameDecorations.options.args.iconInset.order = 41
 GridFrameDecorations.options.args.iconAlpha.order = 42
 
@@ -904,6 +1022,20 @@ function GridFrameDecorations:OnInitialize()
 end
 
 function GridFrameDecorations:OnEnable()
+    if not self.directionUpdateFrame then
+        self.directionUpdateElapsed = 0
+        self.directionUpdateFrame = CreateFrame("Frame")
+        self.directionUpdateFrame:SetScript("OnUpdate", function(_, elapsed)
+            if not GridFrameDecorations.db.profile.showDirectionArrow then return end
+            GridFrameDecorations.directionUpdateElapsed =
+                (GridFrameDecorations.directionUpdateElapsed or 0) + elapsed
+            if GridFrameDecorations.directionUpdateElapsed >= 0.15 then
+                GridFrameDecorations.directionUpdateElapsed = 0
+                GridFrameDecorations:UpdateAllDirectionArrows()
+            end
+        end)
+    end
+
     self:RegisterEvent("PLAYER_ENTERING_WORLD", "RefreshAll")
     self:RegisterEvent("Grid_RosterUpdated", "RefreshAll")
     self:RegisterEvent("PARTY_MEMBERS_CHANGED", "RefreshAll")
@@ -924,7 +1056,12 @@ end
 function GridFrameDecorations:OnDisable()
     if not GridFrame.registeredFrames then return end
     for _, frameObject in pairs(GridFrame.registeredFrames) do
-        if frameObject.decorations then frameObject.decorations.overlay:Hide() end
+        if frameObject.decorations then
+            frameObject.decorations.overlay:Hide()
+            if frameObject.decorations.directionArrow then
+                frameObject.decorations.directionArrow:Hide()
+            end
+        end
     end
 end
 

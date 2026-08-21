@@ -678,3 +678,51 @@ VERSION 1.3.0 QA PASSES
 [PASS] Lua parentheses balanced
 [PASS] Lua brackets balanced
 [PASS] TOC version updated
+
+VERSION 1.3.1 QA PASSES
+[PASS] toggle default off
+[PASS] toggle exists
+[PASS] size setting exists
+[PASS] relative helper exists
+[PASS] map positions used
+[PASS] player facing used
+[PASS] 8 textures referenced
+[PASS] arrow attached
+[PASS] arrow laid out
+[PASS] normal update calls arrow
+[PASS] periodic update exists
+[PASS] self arrow hidden
+[PASS] combat menu toggle retained
+[PASS] tank healer compact layout retained
+[PASS] health direction retained
+[PASS] version updated
+[PASS] all arrow assets exist
+[PASS] parentheses balanced
+[PASS] brackets balanced
+
+VERSION 1.3.2 LOAD-ORDER QA
+[PASS] GridLayout before GridFrame in TOC
+[PASS] GridFrame before Decorations in TOC
+[PASS] No eager GridFrame dependency in Layout
+[PASS] Lazy GridFrame lookup exists
+[PASS] Lazy lookup has fallback border
+[PASS] Layout module declaration intact
+[PASS] Layout options still present
+[PASS] Tank/healer option retained
+[PASS] Compact priority builder retained
+[PASS] True zero padding retained
+[PASS] Decorations module declaration intact
+[PASS] Role/Class/Power options retained
+[PASS] Direction arrows retained
+[PASS] Combat menu toggle retained
+[PASS] Whisper retained
+[PASS] Frame module declaration intact
+[PASS] Health direction retained
+[PASS] Tooltip Always retained
+[PASS] Layout parentheses balanced
+[PASS] Layout brackets balanced
+[PASS] Decorations parentheses balanced
+[PASS] Decorations brackets balanced
+[PASS] Frame parentheses balanced
+[PASS] Frame brackets balanced
+[PASS] Version updated
